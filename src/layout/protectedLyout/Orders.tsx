@@ -36,7 +36,7 @@ export default function Ticket() {
     },
   ]
   return (
-    <div className='bg-gray-950'>
+    <div className='md:top-28 bg-gray-950'>
       <div className="bg-white mx-9 px-8 py-8 pt-5 rounded-lg">
         <h1 className="font-bold text-black"><u>HAVING ANY ISSUE IN ORDER?</u> <a href="" className="text-blue-700">CLICK HERE FOR SEND NEW TICKET</a></h1>
       </div>

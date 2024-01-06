@@ -29,12 +29,7 @@ export default function SideNavbar(props: NavItemsProps) {
     }, []);
     const navigate = useNavigate();
 
-    const {
-        isAuthUser,
-        setIsAuthUser,
-        setUser
-      } = useContext(AuthContext);
-      console.log("user isAuthUser",  isAuthUser)
+    const { setIsAuthUser, setUser } = useContext(AuthContext);
     const handelLogout = () => {
         setIsAuthUser(false);
         setUser(null);
@@ -67,14 +62,18 @@ export default function SideNavbar(props: NavItemsProps) {
                 </button>
 
                 <div className={`items-center justify-between w-full md:contents ${navClick ? '' : 'hidden'}`} id="navbar-user">
-                    <ul className={`flex flex-col font-medium p-4 md:p-0 mt-4 bg-white shadow-lg shadow-slate-500/50 rounded-lg  md:bg-transparent md:shadow-none  md:mt-0 md:border-0 `}>
+                    <ul className={`flex flex-col font-medium p-4 md:p-0 mt-4  md:mt-0  `}>
+                        <li className="md:hidden block py-2 pl-3 pr-4 w-full text-left font-bold rounded-lg bg-white">
+                            <i className="pe-3 fa-solid fa-indian-rupee-sign"></i>
+                            0.00
+                        </li>
                         {navOption.map(item => (
                             <li key={item.id} className='md:py-3'>
                                 <NavLink to={item.path}
                                     key={item.id}
                                     onClick={() => { onNaveClick() }}
                                     className="block py-2 pl-3 pr-4 text-white font-bold rounded-lg hover:bg-gray-400 hover:text-[#353551] "
-                                    target={item.target}
+                                    // target={item.target}
                                     style={({ isActive }) => ({
                                         background: isActive ? 'white' : '',
                                         color: isActive ? '#353551' : ''
@@ -85,7 +84,19 @@ export default function SideNavbar(props: NavItemsProps) {
                             </li>
                         ))}
                         <li>
-                        <button onClick={handelLogout} className={"buttonClass"}>Log out</button>
+                            <NavLink to="account"
+                                className="md:hidden block py-2 pl-3 pr-4 rounded text-white  hover:bg-[#478385] hover:text-white"
+                                style={({ isActive }) => ({
+                                    background: isActive ? '#478385' : '',
+                                })}>
+                                <i className="pe-3 fa-regular fa-user"></i>
+                                Account
+                            </NavLink>
+                        </li>
+                        <li className='md:py-3'>
+                            <button onClick={handelLogout} className="md:hidden block py-2 pl-3 pr-4 w-full text-left text-white font-bold rounded-lg hover:bg-gray-400 hover:text-[#353551] ">
+                                <i className="pe-3 fa-solid fa-right-from-bracket"></i>Log out
+                            </button>
                         </li>
                     </ul>
                 </div>
