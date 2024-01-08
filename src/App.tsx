@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Routes, Route, useNavigate } from "react-router-dom";
 import './App.css'
 import NewOrder from './layout/protectedLyout/NewOrder'
 import Services from "./layout/Services";
@@ -36,22 +36,42 @@ function App() {
   });
   const [isAuthUser, setIsAuthUser] = useState<boolean>(false);
   const [user, setUser] = useState<registerUserType | null>(null);
-  useEffect(() => {
+
+  const navigate = useNavigate();
+  const isTokenExpired = () => {
     const accessToken = localStorage.getItem('token');
     if (accessToken && accessToken !== null) {
+      const decodedToken = JSON.parse(atob(accessToken.split('.')[1]));
+      return decodedToken.exp < Date.now() / 1000;
+    }
+    return true;
+  };
+
+  useEffect(() => {
+    const tokenExpired = isTokenExpired();
+    if (!tokenExpired) {
       setIsAuthUser(true);
       const userData = JSON.parse(localStorage.getItem('user') || '{}');
       setUser(userData);
     } else {
       setIsAuthUser(false);
-      setUser({} as registerUserType);
+      setUser(null);
+      localStorage.clear();
+      navigate("/");
     }
-  }, []);
+  }, [navigate]);
   console.log("isAuthenticated", isAuthUser)
-  console.log("user", user)
+
+  const contextValue = {
+    isAuthUser, setIsAuthUser,
+    user, setUser,
+    componentLevelLoader, setComponentLevelLoader,
+    pageLevelLoader, setPageLevelLoader
+  }
+
   return (
-    <BrowserRouter>
-      <AuthContext.Provider value={{ isAuthUser, setIsAuthUser, user, setUser, componentLevelLoader, setComponentLevelLoader, pageLevelLoader, setPageLevelLoader }}>
+    <div>
+      <AuthContext.Provider value={contextValue}>
 
         {!isAuthUser &&
           <div className="bg-[#0e5658] h-screen overflow-x-hidden">
@@ -94,7 +114,7 @@ function App() {
         }
       </AuthContext.Provider>
       <Titles />
-    </BrowserRouter>
+    </div>
   )
 }
 

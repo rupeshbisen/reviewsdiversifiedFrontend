@@ -51,8 +51,6 @@ export default function Ticket() {
   ]
 
   const [ticketFormData, setTicketFormData] = useState(initialTicketdata);
-  // const [error, setError] = useState<string>();
-
   const { componentLevelLoader, setComponentLevelLoader, } = useContext(AuthContext);
 
 
@@ -91,7 +89,7 @@ export default function Ticket() {
       setTicketFormData(initialTicketdata);
       setComponentLevelLoader({ loading: false, id: "" });
     } else {
-      toast.error(res.message, {
+      toast.error(res.error, {
         position: toast.POSITION.TOP_RIGHT,
       });
       setComponentLevelLoader({ loading: false, id: "" });
