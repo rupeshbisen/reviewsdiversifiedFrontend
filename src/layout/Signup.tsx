@@ -71,8 +71,8 @@ export default function Signup() {
   return (
 
     <div className="">
-      <h2>The Cheapest & Best SMM Panel</h2>
-      <div className="flex flex-col items-center justify-between bg-[#0e5658] py-8 pr-10 pl-10 mr-auto xl:px-5 lg:flex-row">
+      <h2 className="text-4xl text-white my-5 font-bold text-center">The Cheapest & Best SMM Panel</h2>
+      <div className="flex flex-col items-center justify-between py-8 pr-10 pl-10 mr-auto xl:px-5 lg:flex-row">
         <div className="flex flex-col justify-center items-center w-full lg:flex-row">
           <div className="w-full mt-10 mr-0 mb-0 ml-0 relative max-w-2xl lg:mt-0 lg:w-5/12">
             <div className="flex flex-col items-center justify-start pt-10 pr-10 pb-10 pl-10 bg-white shadow-2xl rounded-xl relative z-10">
@@ -100,7 +100,7 @@ export default function Signup() {
                   </div>
                 )}
                 <button
-                  className=" disabled:opacity-50 inline-flex w-full items-center justify-center bg-black px-6 py-4 text-lg 
+                  className=" disabled:opacity-50 inline-flex w-full items-center justify-center bg-blue-950 px-6 py-4 text-lg rounded-xl
                                     text-white transition-all duration-200 ease-in-out focus:shadow font-medium uppercase tracking-wide"
                   disabled={!isFormValid()}
                   onClick={handleSignup}
@@ -116,7 +116,7 @@ export default function Signup() {
                   )}
                 </button>
                 <div className="flex flex-col gap-2 text-center">
-                  <p className='text-gray-800' >Already have an account ? <a href="/">Sign in</a> </p>
+                  <p className='text-gray-800' >Already have an account ? <a href="/" className="text-blue-700">Sign in</a> </p>
                 </div>
               </div>
             </div>

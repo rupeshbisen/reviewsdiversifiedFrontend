@@ -74,7 +74,7 @@ function App() {
       <AuthContext.Provider value={contextValue}>
 
         {!isAuthUser &&
-          <div className="bg-[#0e5658] h-screen overflow-x-hidden">
+          <div className="bg-gray-950 h-screen overflow-x-hidden">
             <Navbar
               navClick={navClick}
               onNaveClick={onMenuClick}
