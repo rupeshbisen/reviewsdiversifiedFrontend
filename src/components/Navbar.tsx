@@ -11,7 +11,7 @@ export default function Navbar(props: NavItemsProps) {
 
     return (
 
-        <nav className={`bg-[#034042]  w-screen`}>
+        <nav className={`bg-gray-950 shadow-gray-600 shadow-lg  w-screen`}>
             <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
                 <a href="/" className="flex items-center">
                     <img src={Logo} className={`h-10`} alt="Logo" />

@@ -1,9 +1,9 @@
 export default function MassOrder() {
   return (
-    <div className='bg-gray-950'>
+    <div className="my-12">
       <div className="bg-white mx-9 px-8 pt-5 rounded-lg">
         <label className="text-gray-700 font-bold text-lg">One order per line in format</label>
-        <textarea className="w-full py-2 outline-none px-3 leading-tight bg-gray-100 text-sm rounded-lg "
+        <textarea className="w-full py-2 outline-none px-3 leading-tight bg-gray-200 text-sm rounded-lg "
           rows={7}
           placeholder='service_id | link | quantity'
         ></textarea>

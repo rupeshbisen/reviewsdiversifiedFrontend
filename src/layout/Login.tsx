@@ -64,7 +64,15 @@ export default function Login() {
 
   return (
     <div className="">
-      <h2>The Cheapest & Best SMM Panel</h2>
+      <h2 className="text-4xl text-white my-5 font-bold text-center">The Cheapest & Best SMM Panel</h2>
+      <div className="flex justify-center">
+        <ul className="text-white list-disc">
+          <li>Main Supplier of SMM Services</li>
+          <li>Whatsapp Support ⚡</li>
+          <li>We beat any price/any quality !</li>
+          <li>Best panel Support in the market !</li>
+        </ul>
+      </div>
       <div className="flex flex-col items-center justify-between pt-0 pr-10 pb-0 pl-10 mt-8 mr-auto xl:px-5 lg:flex-row">
         <div className="flex flex-col justify-center items-center w-full lg:flex-row">
           <div className="w-full mt-10 mr-0 mb-0 ml-0 relative max-w-2xl lg:mt-0 lg:w-5/12">
@@ -108,7 +116,7 @@ export default function Login() {
                   />
                 </div>
                 <button
-                  className="disabled:opacity-50 inline-flex w-full items-center justify-center bg-black px-6 py-4 text-lg 
+                  className="disabled:opacity-50 inline-flex w-full items-center justify-center bg-blue-950 px-6 py-4 text-lg rounded-xl
                                     text-white transition-all duration-200 ease-in-out focus:shadow font-medium uppercase tracking-wide"
                   disabled={!isValidForm()}
                   onClick={handleLogin}
@@ -126,7 +134,7 @@ export default function Login() {
                   )}
                 </button>
                 <div className="flex flex-col gap-2 text-center">
-                  <p className='text-gray-800' >Do not have an account ? <a href="signup">Sign up</a> </p>
+                  <p className='text-gray-800' >Do not have an account ? <a href="signup" className='text-blue-700'>Sign up</a> </p>
                 </div>
               </div>
             </div>
@@ -134,6 +142,7 @@ export default function Login() {
         </div>
       </div>
       <Notification />
+      <h1 className="text-3xl text-white my-5 font-bold text-center">Best Indian SMM Followers Panel</h1>
     </div>
   )
 }
