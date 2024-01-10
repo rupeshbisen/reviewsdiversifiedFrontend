@@ -2,8 +2,8 @@ import { loginUserTypes } from "../../layout/Login";
 
 export const login = async (formData: loginUserTypes) => {
     try {
-        const response = await fetch("http://192.168.0.114:8000/api/v1/users/login", {
-            method: "POST",
+        const response = await fetch("http://192.168.0.197:8000/api/v1/users/login", {
+                    method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },

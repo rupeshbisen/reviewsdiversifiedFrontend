@@ -1,7 +1,7 @@
 import { Routes, Route, useNavigate } from "react-router-dom";
 import './App.css'
 import NewOrder from './layout/protectedLyout/NewOrder'
-import Services from "./layout/Services";
+import Services from "./layout/AddFunds";
 import Orders from "./layout/protectedLyout/Orders";
 import Tickets from "./layout/protectedLyout/Tickets";
 import Updates from "./layout/protectedLyout/Updates";
@@ -13,6 +13,7 @@ import Login from "./layout/Login";
 import Navbar from "./components/Navbar";
 import Signup, { registerUserType } from "./layout/Signup";
 import { AuthContext, ComponentLevelLoader } from "./contexts";
+import AddFunds from "./layout/AddFunds";
 import AddService from "./layout/protectedLyout/AddService";
 import RequestService from "./layout/protectedLyout/RequestService";
 import ComponentLevelNav from "./components/ComponentLevelNav";
@@ -100,7 +101,7 @@ function App() {
               <Routes>
                 <Route index element={<NewOrder />} />
                 <Route path='orders' element={<Orders />} />
-                <Route path='services' element={<Services />} />
+                <Route path='addfunds' element={<AddFunds />} />
                 <Route path='tickets' element={<Tickets />} />
                 <Route path='addservice' element={<AddService />} />
                 <Route path='requestservice' element={<RequestService />} />
