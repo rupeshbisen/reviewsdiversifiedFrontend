@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import './App.css'
 import NewOrder from './layout/protectedLyout/NewOrder'
-import Services from "./layout/Services";
+import Services from "./layout/AddFunds";
 import Orders from "./layout/protectedLyout/Orders";
 import Tickets from "./layout/protectedLyout/Tickets";
 import Updates from "./layout/protectedLyout/Updates";
@@ -15,6 +15,7 @@ import Navbar from "./components/Navbar";
 import Signup, { registerUserType } from "./layout/Signup";
 import { AuthContext, ComponentLevelLoader } from "./contexts";
 import Unauthorized from "./layout/Unauthorized";
+import AddFunds from "./layout/AddFunds";
 
 function App() {
   const element = document.getElementById('root')
@@ -76,7 +77,7 @@ function App() {
               <Routes>
                 <Route index element={<NewOrder />} />
                 <Route path='orders' element={<Orders />} />
-                <Route path='services' element={<Services />} />
+                <Route path='addfunds' element={<AddFunds />} />
                 <Route path='tickets' element={<Tickets />} />
                 <Route path='massorder' element={<MassOrder />} />
                 <Route path='updates' element={<Updates />} />

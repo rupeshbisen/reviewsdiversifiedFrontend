@@ -92,10 +92,10 @@ export default function Ticket() {
               {
                 TableData.map((value) => (
                   <tr key={value.Id} className="text-gray-700 text-center">
-                    <td className="pb-4">{value.Id}</td>
-                    <td className="pb-4">{value.Subject}</td>
-                    <td className="pb-4">{value.Status}</td>
-                    <td className="pb-4">{value.Last_Date}</td>
+                    <td className="py-2">{value.Id}</td>
+                    <td className="py-2">{value.Subject}</td>
+                    <td className="py-2">{value.Status}</td>
+                    <td className="py-2">{value.Last_Date}</td>
                   </tr>
                 ))
               }

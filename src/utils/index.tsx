@@ -6,12 +6,6 @@ export const nonAuthNavOption = [
         icon: 'fa-solid fa-right-to-bracket'
     },
     {
-        id: "services",
-        lable: "Services",
-        path: "services",
-        icon: 'fa-solid fa-book-open'
-    },
-    {
         id: "signup",
         lable: "Sign up",
         path: "signup",
@@ -33,9 +27,9 @@ export const navOption = [
         icon: 'fa-solid fa-gifts'
     },
     {
-        id: "services",
-        lable: "Services",
-        path: "services",
+        id: "AddFunds",
+        lable: "Add Funds",
+        path: "addfunds",
         icon: 'fa-solid fa-clipboard'
     },
     {
