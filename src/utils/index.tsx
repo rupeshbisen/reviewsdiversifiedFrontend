@@ -27,6 +27,12 @@ export const navOption = [
         icon: 'fa-solid fa-gifts'
     },
     {
+        id: "AddFunds",
+        lable: "Add Funds",
+        path: "addfunds",
+        icon: 'fa-solid fa-clipboard'
+    },
+    {
         id: "tickets",
         lable: "Tickets(SUPPORT)",
         path: "tickets",
