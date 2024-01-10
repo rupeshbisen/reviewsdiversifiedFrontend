@@ -39,21 +39,15 @@ export const navOption = [
         icon: 'fa-regular fa-comment-dots'
     },
     {
-        id: "massorder",
-        lable: "Mass order",
-        path: "massorder",
-        icon: 'fa-solid fa-spa'
-    },
-    {
         id: "Add Your Service",
         lable: "Add Your Service",
-        path: "/mm",
+        path: "/addservice",
         icon: 'fa-solid fa-circle-plus'
     },
     {
         id: "Request Service",
         lable: "Request Service",
-        path: "/dd",
+        path: "/requestservice",
         icon: 'fa-solid fa-hand'
     },
     {
@@ -62,13 +56,13 @@ export const navOption = [
         path: "updates",
         icon: 'fa-solid fa-clone'
     },
-    {
-        id: "jointelegram",
-        lable: "Join Telegram For Daily updates",
-        target: "_blank",
-        path: "https://t.me/rupesh_bisen",
-        icon: 'fa-brands fa-telegram'
-    }
+    // {
+    //     id: "jointelegram",
+    //     lable: "Join Telegram For Daily updates",
+    //     target: "_blank",
+    //     path: "https://t.me/username",
+    //     icon: 'fa-brands fa-telegram'
+    // }
 ]
 
 export const adminOption = [

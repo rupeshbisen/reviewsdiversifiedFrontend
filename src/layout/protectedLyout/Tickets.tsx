@@ -1,4 +1,32 @@
+import { useContext, useState } from "react";
+import { createTicket } from "../../service/ticket";
+import { AuthContext } from "../../contexts";
+import { toast } from "react-toastify";
+import ComponentLevelLoader from "../../components/loader/ComponentLevelLoader";
+import Notification from "../../components/Notification";
 
+// interface File {
+//   name: string;
+//   type: string;
+//   size: number;
+// }
+export interface ticketTypes {
+  orderId: string
+  subject: string;
+  message: string;
+  // attachment:File|null
+}
+
+const initialTicketdata: ticketTypes = {
+  orderId: "",
+  subject: "",
+  message: "",
+  // attachment: {
+  //   name: '',
+  //   type: '',
+  //   size: 0
+  // },
+};
 export default function Ticket() {
 
   const TableData = [
@@ -21,6 +49,53 @@ export default function Ticket() {
       Last_Date: '10-10-2022',
     },
   ]
+
+  const [ticketFormData, setTicketFormData] = useState(initialTicketdata);
+  const { componentLevelLoader, setComponentLevelLoader, } = useContext(AuthContext);
+
+
+  // const validateFileType = () => {
+  //   setError('');
+  //   if (!ticketFormData.attachment) {
+  //     setError("Please upload a file.");
+  //     return;
+  //   }
+
+  //   if (ticketFormData.attachment.size > 20480) {
+  //     setError("Please upload a file that is less than or equal to 20kb.");
+  //     return;
+  //   }
+
+  //   setError('');
+  // };
+
+  function isValidForm() {
+    return ticketFormData &&
+      ticketFormData.subject &&
+      ticketFormData.subject.trim() !== "" &&
+      ticketFormData.message &&
+      ticketFormData.message.trim() !== ""
+      ? true
+      : false;
+  }
+  async function handleTicket() {
+    console.log("ticketFormData", ticketFormData)
+    setComponentLevelLoader({ loading: true, id: "" });
+    const res = await createTicket(ticketFormData);
+    if (res.success) {
+      toast.success(res.message, {
+        position: toast.POSITION.TOP_RIGHT,
+      });
+      setTicketFormData(initialTicketdata);
+      setComponentLevelLoader({ loading: false, id: "" });
+    } else {
+      toast.error(res.error, {
+        position: toast.POSITION.TOP_RIGHT,
+      });
+      setComponentLevelLoader({ loading: false, id: "" });
+    }
+  }
+
   return (
     <div className="my-12">
       <div className="bg-white mx-9 px-8 rounded-lg">
@@ -45,23 +120,86 @@ export default function Ticket() {
 
       <div className="bg-white mx-9 px-8 rounded-lg mt-8 py-8">
         <div className="mb-4">
+          <label className="text-gray-700 font-bold text-lg">Order ID</label>
+          <input className="w-full py-2 outline-none px-3 bg-gray-100 text-sm rounded-lg"
+            placeholder='Enter your subject'
+            type="text"
+            value={ticketFormData.orderId}
+            onChange={(event) => {
+              setTicketFormData({
+                ...ticketFormData,
+                orderId: event.target.value,
+              });
+            }}
+          />
+        </div>
+        <div className="mb-4">
           <label className="text-gray-700 font-bold text-lg">Subject</label>
-          <input className="w-full py-2 outline-none px-3 bg-gray-200 text-sm rounded-lg" />
+          <input className="w-full py-2 outline-none px-3 bg-gray-200 text-sm rounded-lg"
+            placeholder='Enter your subject'
+            type="text"
+            value={ticketFormData.subject}
+            onChange={(event) => {
+              setTicketFormData({
+                ...ticketFormData,
+                subject: event.target.value,
+              });
+            }}
+          />
         </div>
 
         <div className="mb-4">
           <label className="text-gray-700 font-bold text-lg">Message</label>
           <textarea className="w-full outline-none py-2 px-3 leading-tight bg-gray-200 text-sm rounded-lg "
             rows={7}
+            placeholder='Enter your subject'
+            value={ticketFormData.message}
+            onChange={(event) => {
+              setTicketFormData({
+                ...ticketFormData,
+                message: event.target.value,
+              });
+            }}
           ></textarea>
         </div>
-
-        <div className="flex flex-col md:flex-row mb-4">
+        {/* <div className="flex mb-4">
           <p className="text-gray-700 font-bold text-lg mr-5" >Attach a file</p>
-          <input type="file" className="cursor-pointer" />
-        </div>
+          <input type="file"
+            className="cursor-pointer"
+            accept=".pdf,.doc,.docx"
+            onChange={(event) => {
 
-        <button className="bg-blue-950 my-5 text-white text-lg font-bold w-full p-5 rounded-lg">Submit Ticket</button>
+              const files = event.target.files;
+              if (files && files.length > 0) {
+                setTicketFormData({
+                  ...ticketFormData,
+                  attachment: files[0],
+                });
+              }
+
+            }}
+            onBlur={validateFileType}
+          />
+          {error && <p className="text-red-700">{error}</p>}
+        </div> */}
+        <button
+          className="disabled:opacity-50 inline-flex items-center justify-center bg-blue-950 my-5 text-white text-lg font-bold w-full p-5 rounded-lg
+                                     transition-all duration-200 ease-in-out focus:shadow "
+          disabled={!isValidForm()}
+          onClick={handleTicket}
+        >
+          {componentLevelLoader && componentLevelLoader.loading ? (
+            <ComponentLevelLoader
+              text={"Logging In"}
+              color={"#ffffff"}
+              loading={
+                componentLevelLoader && componentLevelLoader.loading
+              }
+            />
+          ) : (
+            "Submit Ticket"
+          )}
+        </button>
       </div>
 
       <div className="bg-white mx-9 px-8 rounded-lg mt-8 py-8 overflow-x-auto">
@@ -104,6 +242,7 @@ export default function Ticket() {
         </div>
 
       </div>
+      <Notification />
     </div>
   )
 }

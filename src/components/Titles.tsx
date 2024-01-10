@@ -17,14 +17,16 @@ export default function Titles() {
             // case "/my-app": return "Homepage | Website Name";
             case '/':
                 return 'SMM Panel';
+            case '/signup':
+                return 'Sign up';
             case '/orders':
                 return 'Orders';
             case '/services':
                 return 'Services';
             case '/tickets':
                 return 'Tickets';
-            case '/massorder':
-                return 'Mass Order';
+            case '/account':
+                return 'Account';
             case '/updates':
                 return 'Updates';
             default:
