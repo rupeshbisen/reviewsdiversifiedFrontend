@@ -1,9 +1,9 @@
-import { Routes, Route, useNavigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import './App.css'
 import NewOrder from './layout/protectedLyout/NewOrder'
 import Services from "./layout/Services";
 import Orders from "./layout/protectedLyout/Orders";
-import Tickets from "./layout/protectedLyout/Tickets";
+import Tickets, { ticketTypes } from "./layout/protectedLyout/Tickets";
 import Updates from "./layout/protectedLyout/Updates";
 import PageNotFound from "./layout/PageNotFound";
 import Titles from "./components/Titles";
@@ -17,6 +17,8 @@ import AddService from "./layout/protectedLyout/AddService";
 import RequestService from "./layout/protectedLyout/RequestService";
 import ComponentLevelNav from "./components/ComponentLevelNav";
 import Account from "./layout/protectedLyout/Account";
+import AdminView, { orderTypes } from "./layout/protectedLyout/Admin";
+import AdminTicket from "./layout/protectedLyout/AdminTicket";
 
 function App() {
   const element = document.getElementById('root')
@@ -36,8 +38,11 @@ function App() {
   });
   const [isAuthUser, setIsAuthUser] = useState<boolean>(false);
   const [user, setUser] = useState<registerUserType | null>(null);
+  const [allOrdersForAllUsers, setAllOrdersForAllUsers] = useState<Array<orderTypes>>([]);
+  const [allOrdersForUser, setAllOrdersForUser] = useState<Array<orderTypes>>([]);
+  const [allTicketForAdmin, setAllTicketForAdmin] = useState<Array<ticketTypes>>([]);
+  const [allTicketForUser, setAllTicketUser] = useState<Array<ticketTypes>>([]);
 
-  const navigate = useNavigate();
   const isTokenExpired = () => {
     const accessToken = localStorage.getItem('token');
     if (accessToken && accessToken !== null) {
@@ -57,16 +62,19 @@ function App() {
       setIsAuthUser(false);
       setUser(null);
       localStorage.clear();
-      navigate("/");
     }
-  }, [navigate]);
+  }, []);
   console.log("isAuthenticated", isAuthUser)
 
   const contextValue = {
     isAuthUser, setIsAuthUser,
     user, setUser,
     componentLevelLoader, setComponentLevelLoader,
-    pageLevelLoader, setPageLevelLoader
+    pageLevelLoader, setPageLevelLoader,
+    allOrdersForAllUsers, setAllOrdersForAllUsers,
+    allOrdersForUser, setAllOrdersForUser,
+    allTicketForAdmin, setAllTicketForAdmin,
+    allTicketForUser, setAllTicketUser,
   }
 
   return (
@@ -98,10 +106,21 @@ function App() {
             <div className="flex-auto md:w-4/5 md:h-screen overflow-y-auto ">
               <ComponentLevelNav />
               <Routes>
-                <Route index element={<NewOrder />} />
+                {
+                  user?.role === "admin" ?
+                    <Route index element={<AdminView />} />
+                    :
+                    <Route index element={<NewOrder />} />
+                }
+                {
+                  user?.role === "admin" ?
+                    <Route path="tickets" element={<AdminTicket />} />
+                    :
+                    <Route path='tickets' element={<Tickets />} />
+                }
                 <Route path='orders' element={<Orders />} />
                 <Route path='services' element={<Services />} />
-                <Route path='tickets' element={<Tickets />} />
+
                 <Route path='addservice' element={<AddService />} />
                 <Route path='requestservice' element={<RequestService />} />
                 <Route path='updates' element={<Updates />} />

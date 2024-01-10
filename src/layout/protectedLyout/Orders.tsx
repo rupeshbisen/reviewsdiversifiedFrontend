@@ -1,79 +1,74 @@
+import { useContext, useEffect } from "react";
+import { getAllOrdersForUser } from "../../service/order";
+import { AuthContext } from "../../contexts";
+import { PulseLoader } from "react-spinners";
+import { toast } from "react-toastify";
+import Notification from "../../components/Notification";
+import moment from "moment";
+import { orderTypes } from "./Admin";
+
 export default function Ticket() {
 
-  const TableData = [
-    {
-      Id: '1',
-      date: '10-10-2022',
-      link: 'Mobile',
-      charge: '10-10-2022',
-      start_Count: '22',
-      quantity: '20',
-      service: 'test',
-      status: 'update',
-      remains: '1',
-    },
-    {
-      Id: '2',
-      date: '10-10-2022',
-      link: 'Mobile',
-      charge: '10-10-2022',
-      start_Count: '22',
-      quantity: '20',
-      service: 'test',
-      status: 'update',
-      remains: '1',
-    },
-    {
-      Id: '3',
-      date: '10-10-2022',
-      link: 'Mobile',
-      charge: '10-10-2022',
-      start_Count: '22',
-      quantity: '20',
-      service: 'test',
-      status: 'update',
-      remains: '1',
-    },
-  ]
+  const {
+    user,
+    pageLevelLoader,
+    setPageLevelLoader,
+    allOrdersForUser,
+    setAllOrdersForUser,
+  } = useContext(AuthContext);
 
-  const ProcessData = [
-    {
-      title: 'Pending',
-    },
-    {
-      title: 'In Process',
-    },
-    {
-      title: 'Completed',
-    },
-    {
-      title: 'Partial',
-    },
-    {
-      title: 'Processing',
-    },
-    {
-      title: 'Cancelled',
-    },
-  ]
+  async function extractAllOrders() {
+    setPageLevelLoader(true);
+    const res = await getAllOrdersForUser(user?._id as string);
+
+    if (res.success) {
+      setPageLevelLoader(false);
+      const date = res.data.createdAt
+      const formattedDate = moment(date).format('DD/MM/YYYY');
+
+      const updatedArrayOfObjects = res.data.map((obj: orderTypes) => ({
+        ...obj,
+        createdAt: formattedDate
+      }));
+
+      setAllOrdersForUser(updatedArrayOfObjects);
+      toast.success(res.message, {
+        position: toast.POSITION.TOP_RIGHT,
+      });
+    } else {
+      setPageLevelLoader(false);
+      toast.error(res.message, {
+        position: toast.POSITION.TOP_RIGHT,
+      });
+    }
+  }
+
+  useEffect(() => {
+    if (user !== null) extractAllOrders();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
+
+
+  if (pageLevelLoader) {
+    return (
+      <div className="w-full min-h-screen flex justify-center items-center">
+        <PulseLoader
+          color={"#000000"}
+          loading={pageLevelLoader}
+          size={30}
+          data-testid="loader"
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="my-12">
       <div className="bg-white mx-9 px-8 py-8 pt-5 rounded-lg">
-        <h1 className="font-bold"><u>HAVING ANY ISSUE IN ORDER?</u> <a href="" className="text-blue-700">CLICK HERE FOR SEND NEW TICKET</a></h1>
+        <h1 className="font-bold"><u>HAVING ANY ISSUE IN ORDER?</u> <a href="/tickets" className="text-blue-700">CLICK HERE FOR SEND NEW TICKET</a></h1>
       </div>
 
-      <div>
-        <div className="md:flex list-none mx-9 my-9">
-          <button className="p-3 bg-white text-gray-700 w-full md:w-auto rounded-lg mr-3 mb-2">All</button>
-          {
-            ProcessData.map((item) => (
-              <button className="p-3 bg-gray-800 text-white hover:text-gray-700 mb-2 hover:bg-white rounded-lg mr-3 w-full md:w-auto "><a href="">{item.title}</a></button>
-            ))
-          }
-        </div>
-      </div>
-
-      <div className="bg-white mx-9 px-8 rounded-lg py-6 overflow-x-auto">
+      <div className="bg-white m-9  px-8 rounded-lg py-6 overflow-x-auto">
         <div className="relative flex items-center w-full h-12 rounded-lg focus-within:shadow-lg bg-gray-200 overflow-hidden">
           <div className="grid place-items-center h-full w-12 text-gray-600">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -86,33 +81,34 @@ export default function Ticket() {
             placeholder="Search something.." />
         </div>
         <div>
-          <table className="w-full mt-9">
+          <table className="w-full mt-9 table-auto">
             <thead>
               <tr className="border-b border-gray-200 text-gray-800">
-                <th>Id</th>
-                <th>Date</th>
-                <th>Link</th>
-                <th>Charge</th>
-                <th>Start Count</th>
-                <th>Quantity</th>
-                <th>Service</th>
-                <th>Status</th>
-                <th>Remains</th>
+                <th className="px-2">Id</th>
+                <th className="px-2">Date</th>
+                <th className="px-2">Link</th>
+                <th className="px-2">Charge</th>
+                <th className="px-2">Quantity</th>
+                <th className="px-2">Service</th>
+                <th className="px-2">Status</th>
               </tr>
             </thead>
             <tbody>
               {
-                TableData.map((value) => (
-                  <tr key={value.Id} className="text-gray-700 text-center">
-                    <td className="pb-4">{value.Id}</td>
-                    <td className="pb-4">{value.date}</td>
-                    <td className="pb-4">{value.link}</td>
-                    <td className="pb-4">{value.charge}</td>
-                    <td className="pb-4">{value.start_Count}</td>
-                    <td className="pb-4">{value.quantity}</td>
-                    <td className="pb-4">{value.service}</td>
-                    <td className="pb-4">{value.status}</td>
-                    <td className="pb-4">{value.remains}</td>
+                allOrdersForUser.map((value,index) => (
+                  <tr key={value._id} className={`text-gray-700 text-center ${index % 2===0 ? 'bg-pink-100' : ''}`}>
+                    <td className="p-3">{value._id}</td>
+                    <td className="b-3">{value.createdAt}</td>
+                    <td className="p-3">{value.link}</td>
+                    <td className="p-3">{value.charges}</td>
+                    <td className="p-3">{value.quantity}</td>
+                    <td className="p-3">{value.service}</td>
+                    <td className="p-3">
+                      {value.isProcessing
+                        ? "In Process"
+                        : "Completed"
+                      }
+                    </td>
                   </tr>
                 ))
               }
@@ -120,6 +116,7 @@ export default function Ticket() {
           </table>
         </div>
       </div>
+      <Notification />
     </div>
   )
 }

@@ -1,9 +1,12 @@
-import { useContext, useState } from "react";
-import { createTicket } from "../../service/ticket";
+import { useContext, useEffect, useState } from "react";
+import { createTicket, getAllTicketForUser } from "../../service/ticket";
 import { AuthContext } from "../../contexts";
 import { toast } from "react-toastify";
 import ComponentLevelLoader from "../../components/loader/ComponentLevelLoader";
 import Notification from "../../components/Notification";
+import { registerUserType } from "../Signup";
+import moment from "moment";
+import { PulseLoader } from "react-spinners";
 
 // interface File {
 //   name: string;
@@ -11,9 +14,13 @@ import Notification from "../../components/Notification";
 //   size: number;
 // }
 export interface ticketTypes {
+  _id?: string;
+  user?: registerUserType;
   orderId: string
   subject: string;
   message: string;
+  isProcessing: boolean;
+  updatedAt?: string
   // attachment:File|null
 }
 
@@ -21,6 +28,7 @@ const initialTicketdata: ticketTypes = {
   orderId: "",
   subject: "",
   message: "",
+  isProcessing: true
   // attachment: {
   //   name: '',
   //   type: '',
@@ -29,29 +37,37 @@ const initialTicketdata: ticketTypes = {
 };
 export default function Ticket() {
 
-  const TableData = [
-    {
-      Id: '1',
-      Subject: 'Email',
-      Status: 'Mobile',
-      Last_Date: '10-10-2022',
-    },
-    {
-      Id: '2',
-      Subject: 'Email',
-      Status: 'Mobile',
-      Last_Date: '10-10-2022',
-    },
-    {
-      Id: '3',
-      Subject: 'Email',
-      Status: 'Mobile',
-      Last_Date: '10-10-2022',
-    },
-  ]
+  // const TableData = [
+  //   {
+  //     Id: '1',
+  //     Subject: 'Email',
+  //     Status: 'Mobile',
+  //     Last_Date: '10-10-2022',
+  //   },
+  //   {
+  //     Id: '2',
+  //     Subject: 'Email',
+  //     Status: 'Mobile',
+  //     Last_Date: '10-10-2022',
+  //   },
+  //   {
+  //     Id: '3',
+  //     Subject: 'Email',
+  //     Status: 'Mobile',
+  //     Last_Date: '10-10-2022',
+  //   },
+  // ]
 
   const [ticketFormData, setTicketFormData] = useState(initialTicketdata);
-  const { componentLevelLoader, setComponentLevelLoader, } = useContext(AuthContext);
+  const {
+    user,
+    componentLevelLoader,
+    setComponentLevelLoader,
+    pageLevelLoader,
+    setPageLevelLoader,
+    allTicketForUser,
+    setAllTicketUser
+  } = useContext(AuthContext);
 
 
   // const validateFileType = () => {
@@ -81,7 +97,12 @@ export default function Ticket() {
   async function handleTicket() {
     console.log("ticketFormData", ticketFormData)
     setComponentLevelLoader({ loading: true, id: "" });
-    const res = await createTicket(ticketFormData);
+    const createFinalFormData = {
+      ...ticketFormData,
+      user: user?._id,
+      isProcessing: true,
+    }
+    const res = await createTicket(createFinalFormData as ticketTypes);
     if (res.success) {
       toast.success(res.message, {
         position: toast.POSITION.TOP_RIGHT,
@@ -96,6 +117,52 @@ export default function Ticket() {
     }
   }
 
+  async function extractAllTicket() {
+    setPageLevelLoader(true);
+    const res = await getAllTicketForUser(user?._id as string);
+
+    if (res.success) {
+      setPageLevelLoader(false);
+      const date = res.data.updatedAt
+      const formattedDate = moment(date).format('DD/MM/YYYY');
+      console.log("res.data.updatedAt", res.data.updatedAt)
+      console.log("formattedDate.....", formattedDate)
+      const updatedArrayOfObjects = res.data.map((obj: ticketTypes) => ({
+        ...obj,
+        updatedAt: formattedDate
+      }));
+
+      setAllTicketUser(updatedArrayOfObjects);
+      console.log("allTicketForUser.....", allTicketForUser)
+      toast.success(res.message, {
+        position: toast.POSITION.TOP_RIGHT,
+      });
+    } else {
+      setPageLevelLoader(false);
+      toast.error(res.message, {
+        position: toast.POSITION.TOP_RIGHT,
+      });
+    }
+  }
+
+  useEffect(() => {
+    if (user !== null) extractAllTicket();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
+
+  if (pageLevelLoader) {
+    return (
+      <div className="w-full min-h-screen flex justify-center items-center">
+        <PulseLoader
+          color={"#000000"}
+          loading={pageLevelLoader}
+          size={30}
+          data-testid="loader"
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="my-12">
       <div className="bg-white mx-9 px-8 rounded-lg">
@@ -105,7 +172,6 @@ export default function Ticket() {
           <li>For Problem with Payments, <a href="" className="font-bold underline text-red-700">CLICK HERE</a></li>
           <li>If you need any Payment method/Service/Feature, Use subject <b>Request</b></li>
           <li>If Any Bug in the website, Use the subject <b>Bug Report</b></li>
-          <li className="font-bold">If anyone want to attach screenshot go to this website https://prnt.sc/ and upload the screenshot and then copy the link and paste it in ticket with issue</li>
         </ul>
         <br />
         <h1 className="font-bold">Note :
@@ -114,7 +180,7 @@ export default function Ticket() {
           <p>&#x2713; Please do not create multiple tickets for the same order Id!</p>
         </h1>
         <br /><br />
-        <p>⚠Do not raise ticket for <b>PAYMENT</b> realted ,For payment issues <a href="" className="font-bold underline text-red-700">CLICK HERE</a></p>
+        {/* <p>⚠Do not raise ticket for <b>PAYMENT</b> realted ,For payment issues <a href="" className="font-bold underline text-red-700">CLICK HERE</a></p> */}
         <br />
       </div>
 
@@ -220,20 +286,25 @@ export default function Ticket() {
           <table className="w-full mt-9">
             <thead>
               <tr className="border-b border-gray-200 text-gray-800">
-                <th>Id</th>
-                <th>Subject</th>
-                <th>Status</th>
-                <th>Last Update</th>
+                <th className="px-2">Order Id</th>
+                <th className="px-2">Subject</th>
+                <th className="px-2">Status</th>
+                <th className="px-2">Last Update</th>
               </tr>
             </thead>
             <tbody>
               {
-                TableData.map((value) => (
-                  <tr key={value.Id} className="text-gray-700 text-center">
-                    <td className="pb-4">{value.Id}</td>
-                    <td className="pb-4">{value.Subject}</td>
-                    <td className="pb-4">{value.Status}</td>
-                    <td className="pb-4">{value.Last_Date}</td>
+                allTicketForUser.map((value, index) => (
+                  <tr key={value._id} className={`text-gray-700 text-center ${index % 2===0 ? 'bg-pink-100' : ''}`}>
+                    <td className="p-3">{value.orderId}</td>
+                    <td className="p-3">{value.subject}</td>
+                    <td className="p-3">
+                      {value.isProcessing
+                        ? "In Process"
+                        : "Completed"
+                      }
+                    </td>
+                    <td className="p-3">{value.updatedAt}</td>
                   </tr>
                 ))
               }

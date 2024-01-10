@@ -1,4 +1,15 @@
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+
 export default function PageNotFound() {
+    const navigate = useNavigate();
+    useEffect(() => {
+        setTimeout(() => {
+            window.location.reload();
+            navigate('/');
+        }, 3000);
+    });
+
     return (
         <div className="w-screen">
             <div className="flex justify-center items-center h-screen bg-black">

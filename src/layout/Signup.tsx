@@ -13,7 +13,8 @@ export interface registerUserType {
   city: string;
   password: string;
   confirmPassword: string;
-  [key: string]: string;
+  role?:string;
+  [key: string]: string | undefined ;
 }
 const initialFormData: registerUserType = {
   username: "",

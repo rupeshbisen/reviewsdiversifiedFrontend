@@ -1,8 +1,9 @@
-import { ticketTypes } from "../../layout/protectedLyout/Tickets";
+import { orderTypes } from "../../layout/protectedLyout/Admin";
+import { newOrder } from "../../layout/protectedLyout/NewOrder";
 
-export const createTicket = async (FormData: ticketTypes) => {
+export const createNewOrder = async (FormData: newOrder) => {
     try {
-        const res = await fetch("http://192.168.0.197:8000/api/v1/users/ticket", {
+        const res = await fetch("http://192.168.0.197:8000/api/v1/users/newOrder", {
             method: "POST",
             headers: {
                 "content-type": "application/json",
@@ -19,9 +20,9 @@ export const createTicket = async (FormData: ticketTypes) => {
     }
 }
 
-export const getAllTicketForUser = async (id: string) => {
+export const getAllOrdersForUser = async (id: string) => {
     try {
-        const res = await fetch(`http://192.168.0.197:8000/api/v1/users/getAllUserTicket?id=${id}`, {
+        const res = await fetch(`http://192.168.0.197:8000/api/v1/users/getAllOrdersForUser?id=${id}`, {
             method: "GET",
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`
@@ -35,9 +36,9 @@ export const getAllTicketForUser = async (id: string) => {
     }
 }
 
-export const getAllUserTicketForAllUsers = async () => {
+export const getAllOrdersForAllUsers = async () => {
     try {
-        const res = await fetch(`http://192.168.0.197:8000/api/v1/users/getAllTicket`, {
+        const res = await fetch(`http://192.168.0.197:8000/api/v1/users/getAllOrder`, {
             method: "GET",
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`
@@ -51,10 +52,9 @@ export const getAllUserTicketForAllUsers = async () => {
     }
 }
 
-
-export const updateStatusOfTicket = async (FormData: ticketTypes) => {
+export const updateStatusOfOrder = async (FormData: orderTypes) => {
     try {
-        const res = await fetch(`http://192.168.0.197:8000/api/v1/users/updateTicketStatus`, {
+        const res = await fetch(`http://192.168.0.197:8000/api/v1/users/updateStatus`, {
             method: "PUT",
             headers: {
                 "content-type": "application/json",

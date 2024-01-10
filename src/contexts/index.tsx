@@ -1,5 +1,7 @@
 import { Dispatch, SetStateAction, createContext } from "react";
 import { registerUserType } from "../layout/Signup";
+import { orderTypes } from "../layout/protectedLyout/Admin";
+import { ticketTypes } from "../layout/protectedLyout/Tickets";
 
 export interface ComponentLevelLoader {
     loading: boolean;
@@ -14,6 +16,14 @@ type Auth = {
     setComponentLevelLoader: Dispatch<SetStateAction<ComponentLevelLoader>>;
     pageLevelLoader: boolean;
     setPageLevelLoader: Dispatch<SetStateAction<boolean>>;
+    allOrdersForUser: Array<orderTypes>;
+    setAllOrdersForUser: Dispatch<SetStateAction<Array<orderTypes>>>;
+    allOrdersForAllUsers: Array<orderTypes>
+    setAllOrdersForAllUsers: Dispatch<SetStateAction<Array<orderTypes>>>;
+    allTicketForAdmin: Array<ticketTypes>
+    setAllTicketForAdmin: Dispatch<SetStateAction<Array<ticketTypes>>>;
+    allTicketForUser: Array<ticketTypes>
+    setAllTicketUser: Dispatch<SetStateAction<Array<ticketTypes>>>;
 }
 
 export const AuthContext = createContext<Auth>({} as Auth)
