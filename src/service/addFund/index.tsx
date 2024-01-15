@@ -1,9 +1,8 @@
-import { orderTypes } from "../../layout/protectedLyout/admin/AdminNewOrder";
-import { newOrder } from "../../layout/protectedLyout/NewOrder";
+import { addFund } from "../../layout/AddFunds";
 
-export const createNewOrder = async (FormData: newOrder) => {
+export const createAddFund = async (FormData: addFund) => {
     try {
-        const res = await fetch("http://192.168.0.197:8000/api/v1/users/newOrder", {
+        const res = await fetch("http://192.168.0.197:8000/api/v1/users/addFund", {
             method: "POST",
             headers: {
                 "content-type": "application/json",
@@ -20,9 +19,9 @@ export const createNewOrder = async (FormData: newOrder) => {
     }
 }
 
-export const getAllOrdersForUser = async (id: string) => {
+export const getAllFundForUser = async (id: string) => {
     try {
-        const res = await fetch(`http://192.168.0.197:8000/api/v1/users/getAllOrdersForUser?id=${id}`, {
+        const res = await fetch(`http://192.168.0.197:8000/api/v1/users/getAllFunduser?id=${id}`, {
             method: "GET",
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`
@@ -36,9 +35,9 @@ export const getAllOrdersForUser = async (id: string) => {
     }
 }
 
-export const getAllOrdersForAllUsers = async () => {
+export const getAllUserFundAdmin = async () => {
     try {
-        const res = await fetch(`http://192.168.0.197:8000/api/v1/users/getAllOrder`, {
+        const res = await fetch(`http://192.168.0.197:8000/api/v1/users/getAllUserFundForAdmin`, {
             method: "GET",
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`
@@ -52,15 +51,33 @@ export const getAllOrdersForAllUsers = async () => {
     }
 }
 
-export const updateStatusOfOrder = async (FormData: orderTypes) => {
+
+export const updateFund = async (FormData: addFund) => {
     try {
-        const res = await fetch(`http://192.168.0.197:8000/api/v1/users/updateStatus`, {
+        const res = await fetch(`http://192.168.0.197:8000/api/v1/users/updateFund`, {
             method: "PUT",
             headers: {
                 "content-type": "application/json",
                 Authorization: `Bearer ${localStorage.getItem("token")}`
             },
             body: JSON.stringify(FormData)
+        })
+        const data = await res.json();
+
+        return data;
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+
+export const getTotalAmount = async (id: string) => {
+    try {
+        const res = await fetch(`http://192.168.0.197:8000/api/v1/users/getAmountTotal?id=${id}`, {
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`
+            }
         })
         const data = await res.json();
 

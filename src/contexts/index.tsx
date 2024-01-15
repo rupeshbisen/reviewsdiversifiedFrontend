@@ -1,7 +1,8 @@
 import { Dispatch, SetStateAction, createContext } from "react";
 import { registerUserType } from "../layout/Signup";
-import { orderTypes } from "../layout/protectedLyout/Admin";
+import { orderTypes } from "../layout/protectedLyout/admin/AdminNewOrder";
 import { ticketTypes } from "../layout/protectedLyout/Tickets";
+import { addFund } from "../layout/AddFunds";
 
 export interface ComponentLevelLoader {
     loading: boolean;
@@ -18,12 +19,23 @@ type Auth = {
     setPageLevelLoader: Dispatch<SetStateAction<boolean>>;
     allOrdersForUser: Array<orderTypes>;
     setAllOrdersForUser: Dispatch<SetStateAction<Array<orderTypes>>>;
-    allOrdersForAllUsers: Array<orderTypes>
-    setAllOrdersForAllUsers: Dispatch<SetStateAction<Array<orderTypes>>>;
+    allNewOrdersForAdmin: Array<orderTypes>
+    setAllNewOrdersForAdmin: Dispatch<SetStateAction<Array<orderTypes>>>;
+    closedAllOrdersForAdmin: Array<orderTypes>
+    setClosedAllOrdersForAdmin: Dispatch<SetStateAction<Array<orderTypes>>>;
     allTicketForAdmin: Array<ticketTypes>
     setAllTicketForAdmin: Dispatch<SetStateAction<Array<ticketTypes>>>;
     allTicketForUser: Array<ticketTypes>
     setAllTicketUser: Dispatch<SetStateAction<Array<ticketTypes>>>;
+    allFundForUser: Array<addFund>
+    setAllFundForUser: Dispatch<SetStateAction<Array<addFund>>>;
+    addFundForAdmin: Array<addFund>
+    setAddFundForAdmin: Dispatch<SetStateAction<Array<addFund>>>;
+    remainingAmount: number
+    setRemainingAmount: Dispatch<SetStateAction<number>>;
+    spentAmount: number
+    setSpentAmount: Dispatch<SetStateAction<number>>;
+
 }
 
 export const AuthContext = createContext<Auth>({} as Auth)

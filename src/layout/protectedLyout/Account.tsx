@@ -4,7 +4,7 @@ import { AuthContext } from "../../contexts";
 export default function Account() {
 
     const { user } = useContext(AuthContext);
-    console.log('useraccount', user)
+    
     return (
         <div className="bg-white mx-9 px-8 rounded-lg mt-8 py-8">
             <h1 className="text-2xl py-5 font-bold text-center">Account Details</h1>

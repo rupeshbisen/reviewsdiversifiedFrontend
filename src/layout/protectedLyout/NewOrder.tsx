@@ -4,6 +4,7 @@ import { AuthContext } from "../../contexts";
 import ComponentLevelLoader from "../../components/loader/ComponentLevelLoader";
 import { toast } from "react-toastify";
 import Notification from "../../components/Notification";
+import { useNavigate } from "react-router-dom";
 
 export interface newOrder {
   link: string,
@@ -83,7 +84,9 @@ export default function NewOrder() {
   };
 
   const [formData, setFormData] = useState(newOrderData);
-  const { user, componentLevelLoader, setComponentLevelLoader, } = useContext(AuthContext);
+  const { spentAmount, remainingAmount, user, componentLevelLoader, setComponentLevelLoader, } = useContext(AuthContext);
+
+  const navigate = useNavigate();
   function isFormValid() {
     return formData &&
       formData.link &&
@@ -91,23 +94,22 @@ export default function NewOrder() {
       formData.quantity &&
       formData.quantity !== 0 &&
       formData.charges &&
-      formData.charges !== 0 &&
+      formData.charges >= 0 &&
       formData.service &&
       formData.service.trim() !== ""
   }
   useEffect(() => {
     const multiplier = formData.service === "5 star Google rating" ? 20 : 25;
     const charges = parseInt((formData.quantity * multiplier).toFixed(2));
-    console.log('Charges:', charges);
     setFormData({
       ...formData,
       charges: charges,
     });
     return
-  }, [formData.service, formData.quantity, formData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formData.service, formData.quantity]);
 
   async function handleNewOrder() {
-    console.log(formData);
     setComponentLevelLoader({ loading: true, id: "" });
     const createFinalCheckoutFormData = {
       ...formData,
@@ -116,18 +118,24 @@ export default function NewOrder() {
       isProcessing: true,
       paidAt: new Date(),
     }
-    const res = await createNewOrder(createFinalCheckoutFormData);
-    if (res.success) {
-      toast.success(res.message, {
-        position: toast.POSITION.TOP_RIGHT,
-      });
-      setFormData(newOrderData);
-      setComponentLevelLoader({ loading: false, id: "" });
+    if (formData.charges <= remainingAmount) {
+      const res = await createNewOrder(createFinalCheckoutFormData);
+      if (res.success) {
+        toast.success(res.message, {
+          position: toast.POSITION.TOP_RIGHT,
+        });
+        setFormData(newOrderData);
+        window.location.reload();
+        setComponentLevelLoader({ loading: false, id: "" });
+      } else {
+        toast.error(res.error, {
+          position: toast.POSITION.TOP_RIGHT,
+        });
+        setComponentLevelLoader({ loading: false, id: "" });
+      }
     } else {
-      toast.error(res.error, {
-        position: toast.POSITION.TOP_RIGHT,
-      });
       setComponentLevelLoader({ loading: false, id: "" });
+      navigate("/addfunds");
     }
   }
 
@@ -151,7 +159,7 @@ export default function NewOrder() {
             <i className="fa-solid fa-chart-simple"></i>
           </div>
           <div className="text-center">
-            <h1 className="text-3xl font-bold">₹0.00</h1>
+            <h1 className="text-3xl font-bold">₹{spentAmount !== 0 ? spentAmount : 0.00}</h1>
             <br />
             <p>Spent balance</p>
           </div>
@@ -171,9 +179,9 @@ export default function NewOrder() {
             <i className="fa-brands fa-cc-amazon-pay"></i>
           </div>
           <div className="text-center">
-            <h1 className="text-3xl font-bold">₹0.00</h1>
+            <h1 className="text-3xl font-bold">₹{remainingAmount !== 0 ? remainingAmount : 0.00}</h1>
             <br />
-            <p>To Add more Fund <br /><a href="" className="text-blue-700 underline">CLICK HERE</a> </p>
+            <p>To Add more Fund <br /><a href="/addfunds" className="text-blue-700 underline">CLICK HERE</a> </p>
           </div>
         </div>
       </div>

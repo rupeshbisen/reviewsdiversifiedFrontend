@@ -5,7 +5,7 @@ import { PulseLoader } from "react-spinners";
 import { toast } from "react-toastify";
 import Notification from "../../components/Notification";
 import moment from "moment";
-import { orderTypes } from "./Admin";
+import { orderTypes } from "./admin/AdminNewOrder";
 
 export default function Ticket() {
 

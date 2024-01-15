@@ -1,39 +1,32 @@
-import { useContext, useEffect } from "react";
-import { AuthContext } from "../../contexts";
-import { getAllOrdersForAllUsers, updateStatusOfOrder } from "../../service/order";
+import { useContext, useEffect, useState } from "react";
+import { AuthContext } from "../../../contexts";
 import { PulseLoader } from "react-spinners";
-import ComponentLevelLoader from "../../components/loader/ComponentLevelLoader";
-import { registerUserType } from "../Signup";
+import ComponentLevelLoader from "../../../components/loader/ComponentLevelLoader";
+import { getAllUserTicketForAllUsers, updateStatusOfTicket } from "../../../service/ticket";
+import { ticketTypes } from "../Tickets";
 
-export interface orderTypes {
-    user: registerUserType;
-    _id?: string;
-    service: string,
-    link: string;
-    quantity: number;
-    charges: number;
-    isProcessing: boolean;
-    createdAt: string;
-
+interface ExpandedMessage {
+    [projectId: number]: boolean;
 }
+
 export default function AdminView() {
     const {
-        allOrdersForAllUsers,
-        setAllOrdersForAllUsers,
+        allTicketForAdmin,
+        setAllTicketForAdmin,
         user,
         pageLevelLoader,
         setPageLevelLoader,
         componentLevelLoader,
         setComponentLevelLoader,
     } = useContext(AuthContext);
-
-    async function extractAllOrdersForAllUsers() {
+    const [expandedMessage, setExpandedMessage] = useState<ExpandedMessage>({});
+    async function extractAllTicketForAdmin() {
         setPageLevelLoader(true);
-        const res = await getAllOrdersForAllUsers();
+        const res = await getAllUserTicketForAllUsers();
 
         if (res.success) {
             setPageLevelLoader(false);
-            setAllOrdersForAllUsers(
+            setAllTicketForAdmin(
                 res.data && res.data.length
                     ? res.data.filter((item: { user: { _id: string; }; }) => item.user._id !== user?._id)
                     : []
@@ -44,20 +37,20 @@ export default function AdminView() {
     }
 
     useEffect(() => {
-        if (user !== null) extractAllOrdersForAllUsers();
+        if (user !== null) extractAllTicketForAdmin();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user]);
 
-    async function handleUpdateOrderStatus(getItem: orderTypes) {
+    async function handleUpdateTicketStatus(getItem: ticketTypes) {
         setComponentLevelLoader({ loading: true, id: getItem._id as string });
-        const res = await updateStatusOfOrder({
+        const res = await updateStatusOfTicket({
             ...getItem,
             isProcessing: false,
         });
 
         if (res.success) {
             setComponentLevelLoader({ loading: false, id: "" });
-            extractAllOrdersForAllUsers();
+            extractAllTicketForAdmin();
         } else {
             setComponentLevelLoader({ loading: false, id: "" });
         }
@@ -75,16 +68,22 @@ export default function AdminView() {
             </div>
         );
     }
+    const toggleMessage = (projectId: number): void => {
+        setExpandedMessage((prev: ExpandedMessage) => ({
+            ...prev,
+            [projectId]: !prev[projectId],
+        }));
+    };
 
     return (
         <section>
             <div className="mx-auto px-4 sm:px-6 lg:px-8">
                 <div>
-                    <div className="bg-white md:mx-9 px-4 md:px-8 py-8 pt-5 rounded-lg">
+                    <div className="bg-white md:mx-9 px-4 md:px-8 py-8 rounded-lg">
                         <div className="flow-root">
-                            {allOrdersForAllUsers && allOrdersForAllUsers.length ? (
+                            {allTicketForAdmin && allTicketForAdmin.length ? (
                                 <ul className="flex flex-col gap-4">
-                                    {allOrdersForAllUsers.map((item) => (
+                                    {allTicketForAdmin.map((item, index) => (
                                         <li
                                             key={item._id}
                                             className="bg-gray-200 shadow p-5 flex flex-col space-y-3 py-6 text-left"
@@ -110,23 +109,47 @@ export default function AdminView() {
                                                             {item?.user?.email}
                                                         </p>
                                                     </div>
-                                                    <div className="flex items-center">
-                                                        <p className="mr-3 text-sm font-medium text-gray-900">
-                                                            Total Paid Amount:
-                                                        </p>
-                                                        <p className="text-sm  font-semibold text-gray-900">
-                                                        <i className="fa-solid fa-indian-rupee-sign"></i>{item?.charges}
-                                                        </p>
-                                                    </div>
                                                 </div>
                                             </div>
                                             <div className="flex gap-2">
                                                 <p className="mr-3 text-sm font-medium text-gray-900">
-                                                    Service:
+                                                    Subject:
                                                 </p>
                                                 <p className="text-sm  font-semibold text-gray-900">
-                                                    {item?.service}
+                                                    {item?.subject}
                                                 </p>
+                                            </div>
+                                            <div className="flex gap-2">
+                                                <p className="mr-3 text-sm font-medium text-gray-900">
+                                                    Message:
+                                                </p>
+                                                {expandedMessage[index] ? (
+                                                    <div>
+                                                        <p className="text-sm font-semibold text-gray-900">
+                                                            {item?.message}
+                                                        </p>
+                                                        <button
+                                                            className="text-fuchsia-600 font-semibold cursor-pointer"
+                                                            onClick={() => toggleMessage(index)}
+                                                        >
+                                                            Less...
+                                                        </button>
+                                                    </div>
+                                                ) : (
+                                                    <div>
+                                                        <p className="text-sm font-semibold text-gray-900">
+                                                            {item?.message.slice(0, 40)}{' '}
+                                                            {item?.message.length > 40 && (
+                                                                <button
+                                                                    className="text-fuchsia-600 font-semibold cursor-pointer"
+                                                                    onClick={() => toggleMessage(index)}
+                                                                >
+                                                                    Read More...
+                                                                </button>
+                                                            )}
+                                                        </p>
+                                                    </div>
+                                                )}
                                             </div>
                                             <div className="flex gap-2">
                                                 <p className="mr-3 text-sm font-medium text-gray-900">
@@ -134,13 +157,13 @@ export default function AdminView() {
                                                 </p>
                                                 <p className="text-sm  font-semibold text-gray-900">
                                                     {item.isProcessing
-                                                        ? "Order in Process"
-                                                        : "Order is delivered"}
+                                                        ? "Ticket in Process"
+                                                        : "Ticket is delivered"}
                                                 </p>
                                             </div>
                                             <div className="flex gap-5">
                                                 <button
-                                                    onClick={() => handleUpdateOrderStatus(item)}
+                                                    onClick={() => handleUpdateTicketStatus(item)}
                                                     disabled={!item.isProcessing}
                                                     className="disabled:opacity-50 mt-5 mr-5  inline-block bg-black text-white px-5 py-3 text-xs font-medium uppercase tracking-wide"
                                                 >
@@ -148,7 +171,7 @@ export default function AdminView() {
                                                         componentLevelLoader.loading &&
                                                         componentLevelLoader.id === item._id ? (
                                                         <ComponentLevelLoader
-                                                            text={"Updating Order Status"}
+                                                            text={"Updating Ticket Status"}
                                                             color={"#ffffff"}
                                                             loading={
                                                                 componentLevelLoader &&
@@ -156,14 +179,14 @@ export default function AdminView() {
                                                             }
                                                         />
                                                     ) : (
-                                                        "Update Order Status"
+                                                        "Update Ticket Status"
                                                     )}
                                                 </button>
                                             </div>
                                         </li>
                                     ))}
                                 </ul>
-                            ) : "There is no order"
+                            ) : "There is no Ticket"
                             }
                         </div>
                     </div>

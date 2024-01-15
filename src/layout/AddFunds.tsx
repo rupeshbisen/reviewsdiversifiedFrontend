@@ -1,30 +1,115 @@
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import QrCode from "../assets/QrCode.jpeg"
+import { registerUserType } from "./Signup";
+import { AuthContext } from "../contexts";
+import ComponentLevelLoader from "../components/loader/ComponentLevelLoader";
+import { createAddFund, getAllFundForUser } from "../service/addFund";
+import { toast } from "react-toastify";
+import Notification from "../components/Notification";
+import { PulseLoader } from "react-spinners";
+import moment from "moment";
 
 export interface addFund {
-  order: string,
-  amount: string,
+  _id?: string
+  user?: registerUserType,
+  isProcessing?: boolean,
+  createdAt?: string,
+  orderId: string,
+  amount: number,
 }
 
 const addFundData: addFund = {
-  order: "",
-  amount: "",
+  orderId: "",
+  amount: 0,
 }
 export default function Services() {
   const [formData, setFormData] = useState(addFundData);
-  const [showTable, setShowTable] = useState(false);
+
+  const {
+    user,
+    componentLevelLoader,
+    setComponentLevelLoader,
+    pageLevelLoader,
+    setPageLevelLoader,
+    allFundForUser,
+    setAllFundForUser,
+  } = useContext(AuthContext);
 
   function isFormValid() {
     return formData &&
-      formData.order &&
-      formData.order.trim() !== "" &&
+      formData.orderId &&
+      formData.orderId.trim() !== "" &&
       formData.amount &&
-      formData.amount.trim() !== ""
+      formData.amount > 0
   }
 
-  function handleAddFunds() {
-    setShowTable(true);
-    console.log(formData);
+  async function handleAddFunds() {
+    setComponentLevelLoader({ loading: true, id: "" });
+    const createFinalCheckoutFormData = {
+      ...formData,
+      user: user?._id,
+      isProcessing: true,
+      paidAt: new Date(),
+    }
+    const res = await createAddFund(createFinalCheckoutFormData as addFund);
+    if (res.success) {
+      toast.success(res.message, {
+        position: toast.POSITION.TOP_RIGHT,
+      });
+      setFormData(addFundData);
+      setComponentLevelLoader({ loading: false, id: "" });
+      extractAllFund()
+    } else {
+      toast.error(res.error, {
+        position: toast.POSITION.TOP_RIGHT,
+      });
+      setComponentLevelLoader({ loading: false, id: "" });
+    }
+  }
+
+  async function extractAllFund() {
+    setPageLevelLoader(true);
+    const res = await getAllFundForUser(user?._id as string);
+
+    if (res.success) {
+      setPageLevelLoader(false);
+      const date = res.data.createdAt
+      const formattedDate = moment(date).format('DD/MM/YYYY');
+
+      const updatedArrayOfObjects = res.data.map((obj: addFund) => ({
+        ...obj,
+        createdAt: formattedDate
+      }));
+
+      setAllFundForUser(updatedArrayOfObjects);
+      toast.success(res.message, {
+        position: toast.POSITION.TOP_RIGHT,
+      });
+    } else {
+      setPageLevelLoader(false);
+      toast.error(res.message, {
+        position: toast.POSITION.TOP_RIGHT,
+      });
+    }
+  }
+
+  useEffect(() => {
+    if (user !== null) extractAllFund();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
+
+
+  if (pageLevelLoader) {
+    return (
+      <div className="w-full min-h-screen flex justify-center items-center">
+        <PulseLoader
+          color={"#000000"}
+          loading={pageLevelLoader}
+          size={30}
+          data-testid="loader"
+        />
+      </div>
+    );
   }
   return (
     <div className="bg-white m-8 p-8 pt-5 rounded-lg">
@@ -40,13 +125,13 @@ export default function Services() {
         </div>
 
         <div className="mb-4">
-          <label className="text-gray-700 font-bold text-lg">Order Id</label>
+          <label className="text-gray-700 font-bold text-lg">Order Id / Transaction Id</label>
           <input className="w-full py-2 outline-none text-gray-700 px-3 bg-gray-200 text-sm rounded-lg"
-            type="number" value={formData.order}
+            type="text" value={formData.orderId}
             onChange={(event) => {
               setFormData({
                 ...formData,
-                order: event.target.value,
+                orderId: event.target.value,
               });
             }} />
         </div>
@@ -58,7 +143,7 @@ export default function Services() {
             onChange={(event) => {
               setFormData({
                 ...formData,
-                amount: event.target.value,
+                amount: parseInt(event.target.value)
               });
             }} />
         </div>
@@ -79,35 +164,55 @@ export default function Services() {
         </div>
 
         <button
+          className="disabled:opacity-50 inline-flex items-center justify-center bg-blue-950 my-5 text-white text-lg font-bold w-full p-3 rounded-lg
+          transition-all duration-200 ease-in-out focus:shadow "
           disabled={!isFormValid()}
           onClick={handleAddFunds}
-          className="disabled:opacity-50 bg-blue-950 my-5 text-white text-lg font-bold w-full p-3 rounded-lg">
-          Check
+        >
+          {componentLevelLoader && componentLevelLoader.loading ? (
+            <ComponentLevelLoader
+              text={"Check"}
+              color={"#ffffff"}
+              loading={
+                componentLevelLoader && componentLevelLoader.loading
+              }
+            />
+          ) : (
+            "Check"
+          )}
         </button>
 
         <div className="m-9 p-5 rounded-lg overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr className="border-b border-gray-200 text-gray-800">
-                <th >Id</th>
-                <th>Date</th>
-                <th>Method</th>
-                <th>Amount</th>
+                <th className="px-2">Id</th>
+                <th className="px-2">Date</th>
+                <th className="px-2">Method</th>
+                <th className="px-2">Amount</th>
+                <th className="px-2">Status</th>
               </tr>
             </thead>
             <tbody>
-              {showTable && (
-                <tr className="text-gray-700 text-center">
-                  <td className="py-2">{formData.order}</td>
-                  <td className="py-2">{new Date().toLocaleString()}</td>
-                  <td className="py-2">Paytm / Phonepay (Min 50 INR)</td>
-                  <td className="py-2">{formData.amount}</td>
+              {allFundForUser.map((value, index) => (
+                <tr key={value._id} className={`text-gray-700 text-center ${index % 2 === 0 ? 'bg-pink-100' : ''}`}>
+                  <td className="p-3">{value.orderId}</td>
+                  <td className="p-3">{value.createdAt}</td>
+                  <td className="p-3">Paytm / Phonepay</td>
+                  <td className="p-3">{value.amount}</td>
+                  <td className="p-3">
+                    {value.isProcessing
+                      ? "In Process"
+                      : "Completed"
+                    }
+                  </td>
                 </tr>
-              )}
+              ))}
             </tbody>
           </table>
         </div>
       </div>
+      <Notification />
     </div>
   )
 }

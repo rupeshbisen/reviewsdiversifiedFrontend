@@ -42,12 +42,12 @@ export default function Updates() {
             <tr className="text-gray-700 text-center">
               <td className="py-2">5 star ⭐  Google rating</td>
               <td className="py-2">09-01-2024</td>
-              <td className="py-2">Rate increased from ₹1036.15 to ₹1037.36</td>
+              <td className="py-2">Rate decreased from ₹25 to ₹20</td>
             </tr>
             <tr className="text-gray-700 text-center">
               <td className="py-2">5 star ⭐  rating + comment</td>
               <td className="py-2">09-01-2024</td>
-              <td className="py-2">Rate increased from ₹1036.15 to ₹1037.36</td>
+              <td className="py-2">Rate decreased from ₹30 to ₹25</td>
             </tr>
           </tbody>
         </table>

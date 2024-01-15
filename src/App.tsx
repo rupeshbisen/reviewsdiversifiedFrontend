@@ -12,13 +12,16 @@ import Login from "./layout/Login";
 import Navbar from "./components/Navbar";
 import Signup, { registerUserType } from "./layout/Signup";
 import { AuthContext, ComponentLevelLoader } from "./contexts";
-import AddFunds from "./layout/AddFunds";
+import AddFunds, { addFund } from "./layout/AddFunds";
 import AddService from "./layout/protectedLyout/AddService";
 import RequestService from "./layout/protectedLyout/RequestService";
 import ComponentLevelNav from "./components/ComponentLevelNav";
 import Account from "./layout/protectedLyout/Account";
-import AdminView, { orderTypes } from "./layout/protectedLyout/Admin";
-import AdminTicket from "./layout/protectedLyout/AdminTicket";
+import AdminNewOrder, { orderTypes } from "./layout/protectedLyout/admin/AdminNewOrder";
+import AdminTicket from "./layout/protectedLyout/admin/AdminTicket";
+import AdminAddFund from "./layout/protectedLyout/admin/AdminAddFund";
+import { getTotalAmount } from "./service/addFund";
+import AdminClosedOrder from "./layout/protectedLyout/admin/AdminClosedOrder";
 
 function App() {
   const element = document.getElementById('root')
@@ -38,10 +41,15 @@ function App() {
   });
   const [isAuthUser, setIsAuthUser] = useState<boolean>(false);
   const [user, setUser] = useState<registerUserType | null>(null);
-  const [allOrdersForAllUsers, setAllOrdersForAllUsers] = useState<Array<orderTypes>>([]);
+  const [allNewOrdersForAdmin, setAllNewOrdersForAdmin] = useState<Array<orderTypes>>([]);
+  const [closedAllOrdersForAdmin, setClosedAllOrdersForAdmin] = useState<Array<orderTypes>>([]);
   const [allOrdersForUser, setAllOrdersForUser] = useState<Array<orderTypes>>([]);
   const [allTicketForAdmin, setAllTicketForAdmin] = useState<Array<ticketTypes>>([]);
   const [allTicketForUser, setAllTicketUser] = useState<Array<ticketTypes>>([]);
+  const [allFundForUser, setAllFundForUser,] = useState<Array<addFund>>([]);
+  const [addFundForAdmin, setAddFundForAdmin] = useState<Array<addFund>>([]);
+  const [remainingAmount, setRemainingAmount] = useState<number>(0);
+  const [spentAmount, setSpentAmount] = useState<number>(0);
 
   const isTokenExpired = () => {
     const accessToken = localStorage.getItem('token');
@@ -64,19 +72,40 @@ function App() {
       localStorage.clear();
     }
   }, []);
-  console.log("isAuthenticated", isAuthUser)
+
+  async function extractAllFund() {
+    if (isAuthUser && !user?.role) {
+      const res = await getTotalAmount(user?._id as string);
+
+      if (res.success) {
+        setRemainingAmount(res.remainingAmount);
+        setSpentAmount(res.spentAmount);
+      }
+    }
+
+  }
+  useEffect(() => {
+    if (user !== null) extractAllFund();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
+
 
   const contextValue = {
     isAuthUser, setIsAuthUser,
     user, setUser,
     componentLevelLoader, setComponentLevelLoader,
     pageLevelLoader, setPageLevelLoader,
-    allOrdersForAllUsers, setAllOrdersForAllUsers,
+    allNewOrdersForAdmin, setAllNewOrdersForAdmin,
+    closedAllOrdersForAdmin, setClosedAllOrdersForAdmin,
     allOrdersForUser, setAllOrdersForUser,
     allTicketForAdmin, setAllTicketForAdmin,
     allTicketForUser, setAllTicketUser,
+    allFundForUser, setAllFundForUser,
+    addFundForAdmin, setAddFundForAdmin,
+    remainingAmount, setRemainingAmount,
+    spentAmount, setSpentAmount
   }
-
+  
   return (
     <div>
       <AuthContext.Provider value={contextValue}>
@@ -108,7 +137,7 @@ function App() {
               <Routes>
                 {
                   user?.role === "admin" ?
-                    <Route index element={<AdminView />} />
+                    <Route index element={<AdminNewOrder />} />
                     :
                     <Route index element={<NewOrder />} />
                 }
@@ -118,8 +147,18 @@ function App() {
                     :
                     <Route path='tickets' element={<Tickets />} />
                 }
-                <Route path='orders' element={<Orders />} />
-                <Route path='addfunds' element={<AddFunds />} />
+                {
+                  user?.role === "admin" ?
+                    <Route path="addfunds" element={<AdminAddFund />} />
+                    :
+                    <Route path='addfunds' element={<AddFunds />} />
+                }
+                {
+                  user?.role === "admin" ?
+                    <Route path='orders' element={<AdminClosedOrder />} />
+                    :
+                    <Route path='orders' element={<Orders />} />
+                }
                 <Route path='tickets' element={<Tickets />} />
                 <Route path='addservice' element={<AddService />} />
                 <Route path='requestservice' element={<RequestService />} />

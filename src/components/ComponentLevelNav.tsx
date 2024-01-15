@@ -6,7 +6,7 @@ export default function ComponentLevelNav() {
 
     const navigate = useNavigate();
 
-    const { setIsAuthUser, setUser } = useContext(AuthContext);
+    const { user, remainingAmount, setIsAuthUser, setUser } = useContext(AuthContext);
     const handelLogout = () => {
         setIsAuthUser(false);
         setUser(null);
@@ -17,10 +17,10 @@ export default function ComponentLevelNav() {
         <nav>
             <div className="hidden max-w-screen-xl md:flex flex-wrap items-center justify-end mx-auto p-4">
                 <ul className={`flex flex-col font-medium p-4 md:p-0 mt-4  md:flex-row md:space-x-8  md:mt-0 md:border-0 `}>
-                    <li className="block py-2 pl-3 pr-4 rounded bg-white">
+                    {user?.role !== "admin" && <li className="block py-2 pl-3 pr-4 rounded bg-white">
                         <i className="pe-2 fa-solid fa-indian-rupee-sign"></i>
-                        0.00
-                    </li>
+                        {remainingAmount !== 0 ? remainingAmount : 0.00}
+                    </li>}
                     <li>
                         <NavLink to="account"
                             className="block py-2 pl-3 pr-4 rounded text-white  hover:bg-[#478385] hover:text-white"

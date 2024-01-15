@@ -95,7 +95,6 @@ export default function Ticket() {
       : false;
   }
   async function handleTicket() {
-    console.log("ticketFormData", ticketFormData)
     setComponentLevelLoader({ loading: true, id: "" });
     const createFinalFormData = {
       ...ticketFormData,
@@ -109,6 +108,7 @@ export default function Ticket() {
       });
       setTicketFormData(initialTicketdata);
       setComponentLevelLoader({ loading: false, id: "" });
+      extractAllTicket();
     } else {
       toast.error(res.error, {
         position: toast.POSITION.TOP_RIGHT,
@@ -125,15 +125,12 @@ export default function Ticket() {
       setPageLevelLoader(false);
       const date = res.data.updatedAt
       const formattedDate = moment(date).format('DD/MM/YYYY');
-      console.log("res.data.updatedAt", res.data.updatedAt)
-      console.log("formattedDate.....", formattedDate)
       const updatedArrayOfObjects = res.data.map((obj: ticketTypes) => ({
         ...obj,
         updatedAt: formattedDate
       }));
 
       setAllTicketUser(updatedArrayOfObjects);
-      console.log("allTicketForUser.....", allTicketForUser)
       toast.success(res.message, {
         position: toast.POSITION.TOP_RIGHT,
       });

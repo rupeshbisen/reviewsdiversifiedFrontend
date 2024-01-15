@@ -13,8 +13,8 @@ export interface registerUserType {
   city: string;
   password: string;
   confirmPassword: string;
-  role?:string;
-  [key: string]: string | undefined ;
+  role?: string;
+  [key: string]: string | undefined;
 }
 const initialFormData: registerUserType = {
   username: "",
@@ -28,18 +28,37 @@ export default function Signup() {
   const [formData, setFormData] = useState(initialFormData);
   const { pageLevelLoader, setPageLevelLoader, isAuthUser } = useContext(AuthContext);
   const navigate = useNavigate();
+
+  const validateEmail = (email: string) => {
+    return String(email)
+      .toLowerCase()
+      .match(
+        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+      );
+  };
+  const validateMobilePhone = (phoneNumber: string) => {
+    return String(phoneNumber)
+      .match(/^[6-9]\d{9}$/);
+  };
+  const validatePassword = (password: string) => {
+    return String(password)
+      .match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/)
+  };
   function isFormValid() {
     return formData &&
       formData.username &&
       formData.username.trim() !== "" &&
       formData.email &&
       formData.email.trim() !== "" &&
+      validateEmail(formData.email) &&
       formData.phoneNumber &&
       formData.phoneNumber.trim() !== "" &&
+      validateMobilePhone(formData.phoneNumber) &&
       formData.city &&
       formData.city.trim() !== "" &&
       formData.password &&
       formData.password.trim() !== "" &&
+      validatePassword(formData.password) &&
       formData.confirmPassword.trim() !== "" &&
       formData.password === formData.confirmPassword
       ? true
@@ -96,8 +115,11 @@ export default function Signup() {
                         });
                       }}
                       value={formData[controlItem.id] as string}
-                      className="border placeholder-gray-400 text-gray-800 focus:outline-none focus:border-black w-full pt-4 pr-4 pb-4 pl-4 mr-0 mt-0 ml-0 text-base block bg-white border-gray-300 rounded-md"
+                      className="peer border placeholder-gray-400 text-gray-800 focus:outline-none focus:border-black w-full pt-4 pr-4 pb-4 pl-4 mr-0 mt-0 ml-0 text-base block bg-white border-gray-300 rounded-md"
                     />
+                    <span className="invisible peer-invalid:visible text-red-700 font-light">
+                      Please enter a valid email address
+                    </span>
                   </div>
                 )}
                 <button
