@@ -93,7 +93,7 @@ export const SignupFormControls = [
     },
     {
         id: "phoneNumber",
-        type: "text",
+        type: "number",
         placeholder: "Enter your phone number",
         label: "Phone Number",
     },

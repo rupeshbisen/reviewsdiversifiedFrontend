@@ -2,7 +2,7 @@ import { addFund } from "../../layout/AddFunds";
 
 export const createAddFund = async (FormData: addFund) => {
     try {
-        const res = await fetch("http://192.168.0.197:8000/api/v1/users/addFund", {
+        const res = await fetch("https://angry-fashion-elk.cyclic.app/api/v1/users/addFund", {
             method: "POST",
             headers: {
                 "content-type": "application/json",
@@ -21,7 +21,7 @@ export const createAddFund = async (FormData: addFund) => {
 
 export const getAllFundForUser = async (id: string) => {
     try {
-        const res = await fetch(`http://192.168.0.197:8000/api/v1/users/getAllFunduser?id=${id}`, {
+        const res = await fetch(`https://angry-fashion-elk.cyclic.app/api/v1/users/getAllFunduser?id=${id}`, {
             method: "GET",
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`
@@ -37,7 +37,7 @@ export const getAllFundForUser = async (id: string) => {
 
 export const getAllUserFundAdmin = async () => {
     try {
-        const res = await fetch(`http://192.168.0.197:8000/api/v1/users/getAllUserFundForAdmin`, {
+        const res = await fetch(`https://angry-fashion-elk.cyclic.app/api/v1/users/getAllUserFundForAdmin`, {
             method: "GET",
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`
@@ -54,7 +54,7 @@ export const getAllUserFundAdmin = async () => {
 
 export const updateFund = async (FormData: addFund) => {
     try {
-        const res = await fetch(`http://192.168.0.197:8000/api/v1/users/updateFund`, {
+        const res = await fetch(`https://angry-fashion-elk.cyclic.app/api/v1/users/updateFund`, {
             method: "PUT",
             headers: {
                 "content-type": "application/json",
@@ -73,7 +73,7 @@ export const updateFund = async (FormData: addFund) => {
 
 export const getTotalAmount = async (id: string) => {
     try {
-        const res = await fetch(`http://192.168.0.197:8000/api/v1/users/getAmountTotal?id=${id}`, {
+        const res = await fetch(`https://angry-fashion-elk.cyclic.app/api/v1/users/getAmountTotal?id=${id}`, {
             method: "GET",
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`

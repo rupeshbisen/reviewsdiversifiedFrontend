@@ -29,41 +29,62 @@ export default function Signup() {
   const { pageLevelLoader, setPageLevelLoader, isAuthUser } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  const validateEmail = (email: string) => {
-    return String(email)
-      .toLowerCase()
-      .match(
-        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-      );
-  };
-  const validateMobilePhone = (phoneNumber: string) => {
-    return String(phoneNumber)
-      .match(/^[6-9]\d{9}$/);
-  };
-  const validatePassword = (password: string) => {
-    return String(password)
-      .match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/)
-  };
+  const [formErrors, setFormErrors] = useState<registerUserType>({
+    username: "",
+    email: "",
+    phoneNumber: "",
+    city: "",
+    password: "",
+    confirmPassword: "",
+  });
+
+  const isFormErrorsEmpty = Object.values(formErrors).every((value) => value === "");
   function isFormValid() {
     return formData &&
       formData.username &&
       formData.username.trim() !== "" &&
       formData.email &&
       formData.email.trim() !== "" &&
-      validateEmail(formData.email) &&
       formData.phoneNumber &&
       formData.phoneNumber.trim() !== "" &&
-      validateMobilePhone(formData.phoneNumber) &&
       formData.city &&
       formData.city.trim() !== "" &&
       formData.password &&
       formData.password.trim() !== "" &&
-      validatePassword(formData.password) &&
       formData.confirmPassword.trim() !== "" &&
-      formData.password === formData.confirmPassword
+      formData.password === formData.confirmPassword &&
+      isFormErrorsEmpty
       ? true
       : false;
   }
+  function validData(controlItem: string) {
+    // Email validation regex
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const isValidEmail = emailRegex.test(formData.email);
+    // Password validation regex
+    const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/;
+    const isValidPassword = passwordRegex.test(formData.password);
+
+    switch (controlItem) {
+      case 'email':
+        setFormErrors((prevErrors) => ({
+          ...prevErrors,
+          email: isValidEmail ? '' : 'Please enter a valid email address',
+        }));
+        break;
+      case 'password':
+        setFormErrors((prevErrors) => ({
+          ...prevErrors,
+          password: isValidPassword
+            ? ''
+            : 'Password must be at least 8 characters long and include at least one digit, one lowercase letter, and one uppercase letter.',
+        }));
+        break;
+      default:
+        break;
+    }
+  }
+
   async function handleSignup() {
     setPageLevelLoader(true);
     const data = await registerNewUser(formData);
@@ -113,13 +134,13 @@ export default function Signup() {
                           ...formData,
                           [controlItem.id]: event.target.value,
                         });
+                        validData(controlItem.id)
                       }}
                       value={formData[controlItem.id] as string}
-                      className="peer border placeholder-gray-400 text-gray-800 focus:outline-none focus:border-black w-full pt-4 pr-4 pb-4 pl-4 mr-0 mt-0 ml-0 text-base block bg-white border-gray-300 rounded-md"
+                      className=" border placeholder-gray-400 text-gray-800 focus:outline-none focus:border-black w-full pt-4 pr-4 pb-4 pl-4 mr-0 mt-0 ml-0 text-base block bg-white border-gray-300 rounded-md"
                     />
-                    <span className="invisible peer-invalid:visible text-red-700 font-light">
-                      Please enter a valid email address
-                    </span>
+                    {formErrors[controlItem.id] && (<span className="text-red-700 font-light">{formErrors[controlItem.id]}</span>
+                    )}
                   </div>
                 )}
                 <button

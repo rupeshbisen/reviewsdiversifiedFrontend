@@ -3,7 +3,7 @@ import { newOrder } from "../../layout/protectedLyout/NewOrder";
 
 export const createNewOrder = async (FormData: newOrder) => {
     try {
-        const res = await fetch("http://192.168.0.197:8000/api/v1/users/newOrder", {
+        const res = await fetch("https://angry-fashion-elk.cyclic.app/api/v1/users/newOrder", {
             method: "POST",
             headers: {
                 "content-type": "application/json",
@@ -22,7 +22,7 @@ export const createNewOrder = async (FormData: newOrder) => {
 
 export const getAllOrdersForUser = async (id: string) => {
     try {
-        const res = await fetch(`http://192.168.0.197:8000/api/v1/users/getAllOrdersForUser?id=${id}`, {
+        const res = await fetch(`https://angry-fashion-elk.cyclic.app/api/v1/users/getAllOrdersForUser?id=${id}`, {
             method: "GET",
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`
@@ -38,7 +38,7 @@ export const getAllOrdersForUser = async (id: string) => {
 
 export const getAllOrdersForAllUsers = async () => {
     try {
-        const res = await fetch(`http://192.168.0.197:8000/api/v1/users/getAllOrder`, {
+        const res = await fetch(`https://angry-fashion-elk.cyclic.app/api/v1/users/getAllOrder`, {
             method: "GET",
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`
@@ -54,7 +54,7 @@ export const getAllOrdersForAllUsers = async () => {
 
 export const updateStatusOfOrder = async (FormData: orderTypes) => {
     try {
-        const res = await fetch(`http://192.168.0.197:8000/api/v1/users/updateStatus`, {
+        const res = await fetch(`https://angry-fashion-elk.cyclic.app/api/v1/users/updateStatus`, {
             method: "PUT",
             headers: {
                 "content-type": "application/json",

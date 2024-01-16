@@ -2,7 +2,7 @@ import { ticketTypes } from "../../layout/protectedLyout/Tickets";
 
 export const createTicket = async (FormData: ticketTypes) => {
     try {
-        const res = await fetch("http://192.168.0.197:8000/api/v1/users/ticket", {
+        const res = await fetch("https://angry-fashion-elk.cyclic.app/api/v1/users/ticket", {
             method: "POST",
             headers: {
                 "content-type": "application/json",
@@ -21,7 +21,7 @@ export const createTicket = async (FormData: ticketTypes) => {
 
 export const getAllTicketForUser = async (id: string) => {
     try {
-        const res = await fetch(`http://192.168.0.197:8000/api/v1/users/getAllUserTicket?id=${id}`, {
+        const res = await fetch(`https://angry-fashion-elk.cyclic.app/api/v1/users/getAllUserTicket?id=${id}`, {
             method: "GET",
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`
@@ -37,7 +37,7 @@ export const getAllTicketForUser = async (id: string) => {
 
 export const getAllUserTicketForAllUsers = async () => {
     try {
-        const res = await fetch(`http://192.168.0.197:8000/api/v1/users/getAllTicket`, {
+        const res = await fetch(`https://angry-fashion-elk.cyclic.app/api/v1/users/getAllTicket`, {
             method: "GET",
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`
@@ -54,7 +54,7 @@ export const getAllUserTicketForAllUsers = async () => {
 
 export const updateStatusOfTicket = async (FormData: ticketTypes) => {
     try {
-        const res = await fetch(`http://192.168.0.197:8000/api/v1/users/updateTicketStatus`, {
+        const res = await fetch(`https://angry-fashion-elk.cyclic.app/api/v1/users/updateTicketStatus`, {
             method: "PUT",
             headers: {
                 "content-type": "application/json",
